@@ -3,11 +3,25 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var sassMiddleware = require('node-sass-middleware');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var app = express();
+
+// Use for sass
+app.use(sassMiddleware({
+  src: path.join(__dirname, '/sass'),
+  dest: path.join(__dirname, '/public/stylesheets'),
+  prefix:  '/stylesheets',
+  indentedSyntax: false, //false 代表 SCSS true 代表 SASS
+  debug: true,
+  sourceMap: true
+}));
+
+// Serve static files from public
+app.use(express.static(path.join(__dirname + "/public")));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
