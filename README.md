@@ -12,6 +12,9 @@
 
 ```
 
+$ npm i
+$ npm start 
+
 
 ```
 
