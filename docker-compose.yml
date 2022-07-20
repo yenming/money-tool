@@ -1,0 +1,53 @@
+version: "3"
+services:
+    mysql:
+        image: mysql:5.7
+        container_name: expressInitDB
+        restart: unless-stopped
+        command:
+            mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
+            --init-connect='SET NAMES UTF8;' --innodb-flush-log-at-trx-commit=0
+        ports:
+            - 3306:3306
+        volumes:
+            - ./mysql/data:/var/lib/mysql
+        environment:
+          - MYSQL_ROOT=root
+          - MYSQL_ROOT_PASSWORD=root
+          - MYSQL_DATABASE=expressInitDB
+        networks:
+            - net-web
+    frontend:
+        container_name: expressInitFE
+        build:
+            context: .
+            dockerfile: Dockerfile
+        environment:
+          - NODE_ENV=production
+          - DB_HOST=mysql
+        ports:
+            - 3000:3000
+        networks:
+            - net-web
+    # nginx:
+    #     build: ./nginx
+    #     restart: always
+    #     depends_on:
+    #         - frontend
+    #         # - backend
+    #     volumes:
+    #         - ./nginx/acme-challenge:/work/www/.well-known/acme-challenge
+    #         - ./nginx/acme:/root/.acme.sh
+    #         - ./nginx/conf:/etc/nginx/conf.d
+    #         - ./nginx/www:/work/www
+    #         - ./nginx/log:/work/log
+    #     ports:
+    #     - 80:80
+    #     - 443:443
+    #     # - 12330
+    #     # - 12331
+    #     networks:
+    #     - net-web
+networks:
+    net-web:
+        driver: bridge
